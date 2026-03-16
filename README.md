@@ -167,8 +167,9 @@ Both CLI and web users can communicate through the same chat server.
 
 ## 📸 Screenshots
 
-![Chat Interface](Image/chat-interface.png)
-
+<p align="center">
+  <img src="Image/chat-interface.png" width="700">
+</p>
 ---
 
 ## 🔮 Future Improvements

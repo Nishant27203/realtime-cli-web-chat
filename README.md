@@ -177,24 +177,6 @@ screenshots/chat-interface.png
 
 ---
 
-## 🧠 Architecture Overview
-
-```
-CLI Client
-     │
-     │
-     ▼
-Socket Server (Flask-SocketIO)
-     │
-     │
-     ▼
-Web Client (Browser)
-```
-
-The system uses **WebSockets** to maintain persistent connections between the server and multiple clients, enabling real-time communication.
-
----
-
 ## 🔮 Future Improvements
 
 * Multiple chat rooms

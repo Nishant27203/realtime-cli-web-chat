@@ -69,5 +69,5 @@ def _send_user_list():
 
 if __name__ == "__main__":
     # Run on configured host/port
-    socketio.run(app, host=WEB_HOST, port=WEB_PORT, debug=True)
+    socketio.run(app, host=WEB_HOST, port=WEB_PORT, debug=True, allow_unsafe_werkzeug=True)
 

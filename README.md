@@ -172,7 +172,7 @@ You can add screenshots of the application interface here.
 Example:
 
 ```
-screenshots/chat-interface.png
+Image/chat-interface.png
 ```
 
 ---

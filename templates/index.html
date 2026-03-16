@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{ app_name }}</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        background: radial-gradient(circle at top left, #1f2937, #020617 55%);
+        color: #e5e7eb;
+        margin: 0;
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+      .sidebar {
+        width: 280px;
+        background: rgba(15, 23, 42, 0.92);
+        padding: 18px 18px 18px 20px;
+        box-sizing: border-box;
+        border-right: 1px solid rgba(148, 163, 184, 0.12);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        backdrop-filter: blur(18px);
+        box-shadow: 8px 0 30px rgba(0, 0, 0, 0.45);
+      }
+      .sidebar h2 {
+        margin: 0 0 4px;
+        font-size: 19px;
+      }
+      .sidebar small {
+        color: #9ca3af;
+      }
+      .card {
+        background: radial-gradient(circle at top left, #020617, #020617 55%);
+        border-radius: 8px;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        padding: 10px 12px;
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.7);
+      }
+      #user-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+      }
+      #user-list li {
+        padding: 4px 0;
+        border-bottom: 1px dashed rgba(55, 65, 81, 0.6);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .avatar {
+        width: 22px;
+        height: 22px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #22c55e, #14b8a6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 600;
+        color: #022c22;
+      }
+      .status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: #22c55e;
+        margin-left: auto;
+        box-shadow: 0 0 8px #22c55e;
+      }
+      .main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: radial-gradient(circle at top right, #1d283a, #020617 60%);
+      }
+      .header {
+        padding: 16px 20px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        backdrop-filter: blur(16px);
+      }
+      .header-title {
+        font-size: 18.5px;
+        font-weight: 600;
+      }
+      .header-room {
+        font-size: 13px;
+        color: #9ca3af;
+      }
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 12px;
+        color: #9ca3af;
+      }
+      .badge-live {
+        padding: 3px 9px;
+        border-radius: 999px;
+        background: rgba(34, 197, 94, 0.12);
+        border: 1px solid rgba(34, 197, 94, 0.5);
+        color: #bbf7d0;
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .badge-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: #22c55e;
+        box-shadow: 0 0 8px #22c55e;
+      }
+      .chat-window {
+        flex: 1;
+        padding: 16px 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .system-msg {
+        color: #9ca3af;
+        font-size: 13px;
+        text-align: center;
+        margin: 2px 0;
+      }
+      .chat-msg {
+        font-size: 14px;
+        display: flex;
+        flex-direction: column;
+        max-width: 70%;
+        padding: 8px 10px;
+        border-radius: 12px;
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.85);
+      }
+      .chat-msg.self {
+        margin-left: auto;
+        background: linear-gradient(135deg, #22c55e, #14b8a6);
+        border-color: transparent;
+        color: #022c22;
+      }
+      .chat-username {
+        font-weight: 600;
+        color: #38bdf8;
+        margin-bottom: 2px;
+      }
+      .chat-msg.self .chat-username {
+        color: #022c22;
+      }
+      .chat-room-tag {
+        font-size: 11px;
+        padding: 1px 6px;
+        border-radius: 999px;
+        background: rgba(34, 197, 94, 0.12);
+        color: #6ee7b7;
+        margin-right: 6px;
+      }
+      .chat-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 11px;
+        margin-top: 4px;
+        color: #9ca3af;
+      }
+      .chat-meta .time {
+        font-variant-numeric: tabular-nums;
+      }
+      .input-area {
+        padding: 10px 16px 16px;
+        border-top: 1px solid rgba(148, 163, 184, 0.18);
+        display: flex;
+        gap: 8px;
+        backdrop-filter: blur(14px);
+        background: linear-gradient(to top, rgba(15, 23, 42, 0.95), transparent);
+      }
+      #message-input {
+        flex: 1;
+        padding: 10px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(55, 65, 81, 0.95);
+        background: rgba(15, 23, 42, 0.9);
+        color: #e5e7eb;
+        outline: none;
+        transition: border 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      }
+      #message-input::placeholder {
+        color: #6b7280;
+      }
+      #message-input:focus {
+        border-color: #22c55e;
+        box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.4);
+        background: rgba(15, 23, 42, 1);
+      }
+      button {
+        padding: 8px 16px;
+        border-radius: 999px;
+        border: none;
+        cursor: pointer;
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        color: #022c22;
+        font-weight: 600;
+        box-shadow: 0 10px 20px rgba(22, 163, 74, 0.4);
+        transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.1s ease;
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: default;
+        box-shadow: none;
+      }
+      button:not(:disabled):hover {
+        transform: translateY(-1px);
+        box-shadow: 0 14px 28px rgba(22, 163, 74, 0.55);
+      }
+      button:not(:disabled):active {
+        transform: translateY(0);
+        box-shadow: 0 8px 18px rgba(22, 163, 74, 0.45);
+      }
+      .login-box {
+        margin-top: 8px;
+        display: flex;
+        gap: 6px;
+      }
+      .login-box input {
+        flex: 1;
+        padding: 6px 8px;
+        border-radius: 6px;
+        border: 1px solid rgba(55, 65, 81, 0.95);
+        background: rgba(15, 23, 42, 0.9);
+        color: #e5e7eb;
+      }
+      .typing-indicator {
+        font-size: 11px;
+        color: #9ca3af;
+        margin-top: 2px;
+        min-height: 14px;
+      }
+      @media (max-width: 900px) {
+        body {
+          flex-direction: column;
+        }
+        .sidebar {
+          width: 100%;
+          flex-direction: row;
+          align-items: flex-start;
+          gap: 10px;
+          border-right: none;
+          border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+        .card:nth-of-type(2),
+        .card:nth-of-type(3) {
+          display: none;
+        }
+      }
+    </style>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div>
+        <h2>{{ app_name }}</h2>
+        <small>Real-time Chat · Room: GENERAL</small>
+      </div>
+      <div class="card">
+        <div><strong>Your Name</strong></div>
+        <div class="login-box">
+          <input
+            id="username-input"
+            placeholder="Enter your name"
+            autocomplete="off"
+          />
+          <button id="join-btn">Join</button>
+        </div>
+      </div>
+      <div class="card">
+        <div><strong>Active Users</strong></div>
+        <ul id="user-list"></ul>
+      </div>
+      <div class="card" style="font-size: 13px">
+        <div><strong>Commands</strong></div>
+        <div>/msg not needed – click &amp; type</div>
+        <div>Interface shows join/leave + chat.</div>
+      </div>
+    </div>
+    <div class="main">
+      <div class="header">
+        <div>
+          <div class="header-title">WEB CHAT ROOM</div>
+          <div class="header-room">Room: GENERAL</div>
+        </div>
+        <div class="header-right">
+          <div class="badge-live">
+            <span class="badge-dot"></span>
+            Live
+          </div>
+          <span>Flask · Socket.IO</span>
+        </div>
+      </div>
+      <div id="chat-window" class="chat-window"></div>
+      <div class="input-area">
+        <input
+          id="message-input"
+          placeholder="Type message and press Enter"
+          disabled
+        />
+        <button id="send-btn" disabled>Send</button>
+      </div>
+      <div id="typing-indicator" class="typing-indicator"></div>
+    </div>
+
+    <script>
+      const socket = io();
+      const chatWindow = document.getElementById("chat-window");
+      const userList = document.getElementById("user-list");
+      const usernameInput = document.getElementById("username-input");
+      const joinBtn = document.getElementById("join-btn");
+      const msgInput = document.getElementById("message-input");
+      const sendBtn = document.getElementById("send-btn");
+      const typingIndicator = document.getElementById("typing-indicator");
+
+      let joined = false;
+      let currentUser = null;
+
+      function addSystem(message) {
+        const div = document.createElement("div");
+        div.className = "system-msg";
+        div.textContent = message;
+        chatWindow.appendChild(div);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+      }
+
+      function addChat(username, message, room) {
+        const div = document.createElement("div");
+        div.className = "chat-msg";
+
+        if (currentUser && username === currentUser) {
+          div.classList.add("self");
+        }
+
+        const roomTag = document.createElement("span");
+        roomTag.className = "chat-room-tag";
+        roomTag.textContent = room || "GENERAL";
+
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "chat-username";
+        nameSpan.textContent = username + ": ";
+
+        const textSpan = document.createElement("span");
+        textSpan.textContent = message;
+
+        const topRow = document.createElement("div");
+        topRow.style.display = "flex";
+        topRow.style.alignItems = "center";
+
+        topRow.appendChild(roomTag);
+        topRow.appendChild(nameSpan);
+
+        div.appendChild(topRow);
+        div.appendChild(textSpan);
+
+        const meta = document.createElement("div");
+        meta.className = "chat-meta";
+        const now = new Date();
+        const time = now.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        const timeSpan = document.createElement("span");
+        timeSpan.className = "time";
+        timeSpan.textContent = time;
+        meta.appendChild(timeSpan);
+        div.appendChild(meta);
+
+        chatWindow.appendChild(div);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+      }
+
+      joinBtn.addEventListener("click", () => {
+        if (joined) return;
+        const username = usernameInput.value.trim() || "Guest";
+        currentUser = username;
+        socket.emit("join", { username });
+        joined = true;
+        usernameInput.disabled = true;
+        joinBtn.disabled = true;
+        msgInput.disabled = false;
+        sendBtn.disabled = false;
+        msgInput.focus();
+      });
+
+      msgInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          sendBtn.click();
+        }
+      });
+
+      sendBtn.addEventListener("click", () => {
+        const text = msgInput.value.trim();
+        if (!text) return;
+        socket.emit("chat", { message: text });
+        msgInput.value = "";
+        typingIndicator.textContent = "";
+      });
+
+      socket.on("system", (data) => {
+        addSystem(data.message);
+      });
+
+      socket.on("chat", (data) => {
+        addChat(data.username, data.message, data.room);
+      });
+
+      socket.on("users", (data) => {
+        userList.innerHTML = "";
+        (data.users || []).forEach((u) => {
+          const li = document.createElement("li");
+          const avatar = document.createElement("div");
+          avatar.className = "avatar";
+          const initials = u
+            .split(" ")
+            .map((p) => p.charAt(0).toUpperCase())
+            .join("")
+            .slice(0, 2);
+          avatar.textContent = initials || "U";
+
+          const name = document.createElement("span");
+          name.textContent = u;
+
+          const dot = document.createElement("span");
+          dot.className = "status-dot";
+
+          li.appendChild(avatar);
+          li.appendChild(name);
+          li.appendChild(dot);
+          userList.appendChild(li);
+        });
+      });
+    </script>
+  </body>
+  </html>
+

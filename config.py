@@ -1,0 +1,7 @@
+HOST = "127.0.0.1"
+CLI_PORT = 9999
+WEB_HOST = "127.0.0.1"
+WEB_PORT = 5000
+
+APP_NAME = "Realtime CLI/Web Chat"
+

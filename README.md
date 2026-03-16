@@ -1,5 +1,11 @@
 # Realtime CLI + Web Chat
 
+![Python](https://img.shields.io/badge/Python-3.10-blue)
+![Flask](https://img.shields.io/badge/Flask-Web%20Framework-black)
+![WebSockets](https://img.shields.io/badge/WebSockets-Realtime-green)
+![Render](https://img.shields.io/badge/Deployment-Render-purple)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+
 A real-time chat application that enables communication between **terminal (CLI) users** and **web browser users** using **WebSockets**.
 
 This project demonstrates how to build a lightweight messaging system using **Python, Flask, and Flask-SocketIO**, allowing multiple users to exchange messages instantly across different interfaces.
@@ -116,6 +122,37 @@ Username: your_name
 ```
 
 ---
+
+## 🏗 Architecture
+
+           +-------------------+
+           |   CLI Client      |
+           |   (client.py)     |
+           +---------+---------+
+                     |
+                     |
+                     v
+           +-------------------+
+           |   Chat Server     |
+           |   Flask-SocketIO  |
+           |   server.py       |
+           +---------+---------+
+                     |
+                     |
+                     v
+           +-------------------+
+           |   Web Server      |
+           |   web_server.py   |
+           +---------+---------+
+                     |
+                     |
+                     v
+           +-------------------+
+           |   Web Browser     |
+           |   index.html      |
+           +-------------------+
+
+ The application uses **Flask-SocketIO and WebSockets** to maintain persistent connections between the server and multiple clients, enabling real-time communication between CLI users and web users.
 
 ## 🖥 Usage
 

@@ -1,110 +1,181 @@
-## CLI Chat Tool (Server & Client)
+# Realtime CLI + Web Chat
 
-This is a simple **CLI-based multi-user chat application** suitable for MCA-level projects.  
-It demonstrates **client–server architecture**, **socket programming**, and **multithreading**.
+A real-time chat application that enables communication between **terminal (CLI) users** and **web browser users** using **WebSockets**.
 
-### Project Structure
+This project demonstrates how to build a lightweight messaging system using **Python, Flask, and Flask-SocketIO**, allowing multiple users to exchange messages instantly across different interfaces.
 
-- `config.py` – central configuration (host, ports, app name).
-- `server.py` – **CLI chat server (admin console)**, accepts connections, manages users/rooms, broadcasts messages.
-- `client.py` – **CLI chat client**, handles login, chat interface, commands, and exit.
-- `web_server.py` – **web-based chat server** (Flask + Socket.IO) and serves the HTML interface.
-- `templates/index.html` – modern web UI for the chat room.
-- `requirements.txt` – Python dependencies for the web version.
+---
 
-### How to Run
+## 🌐 Live Demo
 
-#### A. CLI Version (Terminal)
+Web Chat Interface:
+https://realtime-cli-web-chat.onrender.com
 
-1. **Start the server** (in one terminal):
+---
 
-```bash
-cd /Users/nishant/Downloads/CLI
-python server.py
+## 🚀 Features
+
+* Real-time messaging using WebSockets
+* CLI (terminal) chat client
+* Web browser chat interface
+* Multi-user communication
+* Lightweight Python server
+* Deployable to cloud platforms
+* Simple and extensible architecture
+
+---
+
+## 🛠 Tech Stack
+
+**Backend**
+
+* Python
+* Flask
+* Flask-SocketIO
+
+**Frontend**
+
+* HTML
+* CSS
+* JavaScript
+* Socket.IO
+
+**Deployment**
+
+* Render
+* GitHub
+
+---
+
+## 📁 Project Structure
+
+```
+realtime-cli-web-chat/
+│
+├── client.py            # CLI chat client
+├── server.py            # Socket communication server
+├── web_server.py        # Web interface server
+├── config.py            # Configuration settings
+├── requirements.txt     # Python dependencies
+│
+├── templates/
+│   └── index.html       # Web chat UI
+│
+└── README.md
 ```
 
-You should see the **CLI CHAT SERVER** banner and "Waiting for clients...".
+---
 
-2. **Start a client** (in another terminal window/tab):
+## ⚙️ Installation & Local Setup
 
-```bash
-cd /Users/nishant/Downloads/CLI
-python client.py
+### 1️⃣ Clone the repository
+
+```
+git clone https://github.com/Nishant27203/realtime-cli-web-chat.git
+cd realtime-cli-web-chat
 ```
 
-Enter:
-- Server IP: `127.0.0.1` (or your server machine IP)
-- Port: `9999` (default matches `server.py`)
-- Username: e.g. `Rahul`
+---
 
-3. **Start more clients** for multiple users by running `client.py` again in more terminals.
+### 2️⃣ Install dependencies
 
-#### B. Web Version (Browser Interface)
-
-1. Install dependencies:
-
-```bash
-cd /Users/nishant/Downloads/CLI
+```
 pip install -r requirements.txt
 ```
 
-2. Start the web server:
+---
 
-```bash
+### 3️⃣ Start the web server
+
+```
 python web_server.py
 ```
 
-3. Open your browser and go to:
+The web interface will be available at:
 
-```text
-http://127.0.0.1:5000
+```
+http://localhost:5000
 ```
 
-4. Enter your **name**, click **Join**, and chat from the web page.  
-   Open the URL in multiple browser windows or devices to simulate multiple users.
+---
 
-### Features Implemented
+### 4️⃣ Start the CLI client
 
-- **Server Interface**
-  - Shows status, IP, port.
-  - Lists connected clients and total active users.
-  - Logs join/leave events with timestamps.
-  - Admin commands:
-    - `/users` list active users
-    - `/rooms` list rooms
-    - `/kick <user>` kick a user
-    - `/broadcast <msg>` send message to all users
-    - `/shutdown` stop server
+Open another terminal and run:
 
-- **Client Login Interface**
-  - Prompts for server IP, port, and username.
-  - Validates connection and username uniqueness.
+```
+python client.py
+```
 
-- **Main Chat Interface**
-  - Displays join/leave messages (e.g. `Rahul joined the chat`).
-  - Shows chat messages as `[ROOM] Username: message`.
-  - Simple prompt line `>` for typing.
+Enter the following when prompted:
 
-- **Command Interface**
-  - `/help` – show available commands.
-  - `/users` – list active users.
-  - `/rooms` – list rooms.
-  - `/join <room>` – join/create a room.
-  - `/who` – show users in your current room.
-  - `/msg <user> <text>` – send private message.
-  - `/leave` – leave chat (same as `/exit`).
-  - `/exit` – disconnect from server.
+```
+Server IP: 127.0.0.1
+Port: 9999
+Username: your_name
+```
 
-- **Exit / Disconnect**
-  - Client shows:
-    - `Disconnecting from server...`
-    - `You have left the chat.`
-    - `Connection closed.`
-  - Server logs that the user left and updates total active users.
+---
 
-### Short Viva Explanation
+## 🖥 Usage
 
-“This is a professional-looking chat application built for MCA level using client–server architecture.  
-The **CLI server** manages multiple clients, rooms, and admin commands; the **CLI client** provides a text-based chat and command interface.  
-In addition, a **web interface** built with Flask and Socket.IO offers a modern browser-based chat UI that shows active users and system events in real time.”
+1. Open the **web interface** in a browser
+2. Enter a username and join the chat
+3. Start sending messages in real time
+4. CLI users can also connect using the terminal client
 
+Both CLI and web users can communicate through the same chat server.
+
+---
+
+## 📸 Screenshots
+
+You can add screenshots of the application interface here.
+
+Example:
+
+```
+screenshots/chat-interface.png
+```
+
+---
+
+## 🧠 Architecture Overview
+
+```
+CLI Client
+     │
+     │
+     ▼
+Socket Server (Flask-SocketIO)
+     │
+     │
+     ▼
+Web Client (Browser)
+```
+
+The system uses **WebSockets** to maintain persistent connections between the server and multiple clients, enabling real-time communication.
+
+---
+
+## 🔮 Future Improvements
+
+* Multiple chat rooms
+* Private messaging
+* Message history storage
+* User authentication
+* Improved UI/UX
+* Online users list
+
+---
+
+## 👤 Author
+
+Nishant
+GitHub: https://github.com/Nishant27203
+
+---
+
+## 📜 License
+
+This project is open source and available under the MIT License.

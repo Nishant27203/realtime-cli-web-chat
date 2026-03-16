@@ -167,13 +167,7 @@ Both CLI and web users can communicate through the same chat server.
 
 ## 📸 Screenshots
 
-You can add screenshots of the application interface here.
-
-Example:
-
-```
-Image/chat-interface.png
-```
+![Chat Interface](Image/chat-interface.png)
 
 ---
 

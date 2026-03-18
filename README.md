@@ -72,7 +72,7 @@ realtime-cli-web-chat/
 
 ---
 
-## ⚙️ Installation & Local Setup
+## ⚙️ Installation & Local Setup (Windows/macOS/Linux)
 
 ### 1️⃣ Clone the repository
 
@@ -84,6 +84,22 @@ cd realtime-cli-web-chat
 ---
 
 ### 2️⃣ Install dependencies
+
+Create and activate a virtual environment (recommended):
+
+**macOS/Linux**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+**Windows (PowerShell)**
+```powershell
+py -3 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+Install:
 
 ```
 pip install -r requirements.txt
@@ -102,6 +118,8 @@ The web interface will be available at:
 ```
 http://localhost:5000
 ```
+
+✅ Web UI supports **text + image messages** (Attach button).
 
 ---
 

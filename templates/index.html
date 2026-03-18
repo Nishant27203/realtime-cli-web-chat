@@ -247,6 +247,60 @@
         margin-top: 2px;
         min-height: 14px;
       }
+      .modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(2, 6, 23, 0.85);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 50;
+        backdrop-filter: blur(8px);
+      }
+      .modal.open {
+        display: flex;
+      }
+      .modal-content {
+        width: min(960px, 92vw);
+        max-height: 88vh;
+        background: rgba(15, 23, 42, 0.92);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+      }
+      .modal-bar {
+        padding: 10px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+      }
+      .modal-title {
+        font-size: 12px;
+        color: #cbd5e1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .modal-close {
+        background: rgba(148, 163, 184, 0.12);
+        color: #e5e7eb;
+        box-shadow: none;
+        padding: 6px 10px;
+      }
+      .modal-body {
+        padding: 12px;
+        display: flex;
+        justify-content: center;
+        background: rgba(2, 6, 23, 0.35);
+      }
+      .modal-body img {
+        max-width: 100%;
+        max-height: calc(88vh - 70px);
+        border-radius: 12px;
+      }
       @media (max-width: 900px) {
         body {
           flex-direction: column;
@@ -311,6 +365,8 @@
       </div>
       <div id="chat-window" class="chat-window"></div>
       <div class="input-area">
+        <input id="image-input" type="file" accept="image/*" hidden />
+        <button id="attach-btn" disabled title="Attach image">Attach</button>
         <input
           id="message-input"
           placeholder="Type message and press Enter"
@@ -321,6 +377,18 @@
       <div id="typing-indicator" class="typing-indicator"></div>
     </div>
 
+    <div id="image-modal" class="modal" role="dialog" aria-modal="true">
+      <div class="modal-content">
+        <div class="modal-bar">
+          <div id="modal-title" class="modal-title">Image</div>
+          <button id="modal-close" class="modal-close">Close</button>
+        </div>
+        <div class="modal-body">
+          <img id="modal-img" alt="preview" />
+        </div>
+      </div>
+    </div>
+
     <script>
       const socket = io();
       const chatWindow = document.getElementById("chat-window");
@@ -329,10 +397,36 @@
       const joinBtn = document.getElementById("join-btn");
       const msgInput = document.getElementById("message-input");
       const sendBtn = document.getElementById("send-btn");
+      const imageInput = document.getElementById("image-input");
+      const attachBtn = document.getElementById("attach-btn");
       const typingIndicator = document.getElementById("typing-indicator");
+      const imageModal = document.getElementById("image-modal");
+      const modalImg = document.getElementById("modal-img");
+      const modalTitle = document.getElementById("modal-title");
+      const modalClose = document.getElementById("modal-close");
 
       let joined = false;
       let currentUser = null;
+      let historyLoaded = false;
+
+      function openModal(src, title) {
+        modalImg.src = src;
+        modalTitle.textContent = title || "Image";
+        imageModal.classList.add("open");
+      }
+
+      function closeModal() {
+        imageModal.classList.remove("open");
+        modalImg.src = "";
+      }
+
+      modalClose.addEventListener("click", closeModal);
+      imageModal.addEventListener("click", (e) => {
+        if (e.target === imageModal) closeModal();
+      });
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeModal();
+      });
 
       function addSystem(message) {
         const div = document.createElement("div");
@@ -388,6 +482,59 @@
         chatWindow.scrollTop = chatWindow.scrollHeight;
       }
 
+      function addImage(username, dataUrl, filename, room) {
+        const div = document.createElement("div");
+        div.className = "chat-msg";
+
+        if (currentUser && username === currentUser) {
+          div.classList.add("self");
+        }
+
+        const topRow = document.createElement("div");
+        topRow.style.display = "flex";
+        topRow.style.alignItems = "center";
+
+        const roomTag = document.createElement("span");
+        roomTag.className = "chat-room-tag";
+        roomTag.textContent = room || "GENERAL";
+
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "chat-username";
+        nameSpan.textContent = username + ": ";
+
+        topRow.appendChild(roomTag);
+        topRow.appendChild(nameSpan);
+        div.appendChild(topRow);
+
+        const img = document.createElement("img");
+        img.src = dataUrl;
+        img.alt = filename || "image";
+        img.style.maxWidth = "320px";
+        img.style.width = "100%";
+        img.style.borderRadius = "10px";
+        img.style.marginTop = "6px";
+        img.style.cursor = "pointer";
+        img.loading = "lazy";
+        img.addEventListener("click", () => openModal(dataUrl, filename));
+        div.appendChild(img);
+
+        const meta = document.createElement("div");
+        meta.className = "chat-meta";
+        const now = new Date();
+        const time = now.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        const timeSpan = document.createElement("span");
+        timeSpan.className = "time";
+        timeSpan.textContent = time;
+        meta.appendChild(timeSpan);
+        div.appendChild(meta);
+
+        chatWindow.appendChild(div);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+      }
+
       joinBtn.addEventListener("click", () => {
         if (joined) return;
         const username = usernameInput.value.trim() || "Guest";
@@ -398,6 +545,7 @@
         joinBtn.disabled = true;
         msgInput.disabled = false;
         sendBtn.disabled = false;
+        attachBtn.disabled = false;
         msgInput.focus();
       });
 
@@ -415,12 +563,59 @@
         typingIndicator.textContent = "";
       });
 
+      attachBtn.addEventListener("click", () => {
+        if (!joined) return;
+        imageInput.click();
+      });
+
+      imageInput.addEventListener("change", () => {
+        const file = imageInput.files && imageInput.files[0];
+        if (!file) return;
+        if (!file.type.startsWith("image/")) {
+          addSystem("Only image files are supported.");
+          imageInput.value = "";
+          return;
+        }
+        if (file.size > 900 * 1024) {
+          addSystem("Image too large. Please choose an image under ~900KB.");
+          imageInput.value = "";
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          socket.emit("image", { dataUrl: reader.result, filename: file.name });
+          imageInput.value = "";
+        };
+        reader.readAsDataURL(file);
+      });
+
       socket.on("system", (data) => {
         addSystem(data.message);
       });
 
+      socket.on("history", (data) => {
+        if (historyLoaded) return;
+        historyLoaded = true;
+        const items = (data && data.items) || [];
+        if (items.length > 0) {
+          addSystem(`Loaded ${items.length} recent messages`);
+        }
+        items.forEach((it) => {
+          if (it.type === "text") {
+            addChat(it.username, it.content, it.room);
+          } else if (it.type === "image") {
+            addImage(it.username, it.content, it.filename, it.room);
+          }
+        });
+      });
+
       socket.on("chat", (data) => {
         addChat(data.username, data.message, data.room);
+      });
+
+      socket.on("image", (data) => {
+        addImage(data.username, data.dataUrl, data.filename, data.room);
       });
 
       socket.on("users", (data) => {

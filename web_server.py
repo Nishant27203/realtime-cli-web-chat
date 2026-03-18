@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+import os
 import sqlite3
 import time
 from flask import Flask, render_template, request
@@ -175,7 +175,14 @@ def _send_user_list():
 
 
 if __name__ == "__main__":
-    # Cross-platform run: `python web_server.py`
     init_db()
-    socketio.run(app, host=WEB_HOST, port=WEB_PORT, debug=True, allow_unsafe_werkzeug=True)
 
+    port = int(os.environ.get("PORT", 5000))
+
+    socketio.run(
+        app,
+        host="0.0.0.0",
+        port=port,
+        debug=True,
+        allow_unsafe_werkzeug=True
+    )
